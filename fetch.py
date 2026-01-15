@@ -1,19 +1,27 @@
 import sqlite3
+import gradio as gr
+import pandas as pd
 
-conn = sqlite3.connect('my_database.db')
+def fetch_points():
+    conn = sqlite3.connect('my_database.db')
 
-cursor = conn.cursor()
+    cursor = conn.cursor()
 
-query = '''
-    SELECT * 
-    FROM points;
+    query = '''
+        SELECT * 
+        FROM points;
 
 
-'''
+    '''
 
-cursor.execute(query)
-result = cursor.fetchall()
+    cursor.execute(query)
+    result = cursor.fetchall()
 
-conn.close()
+    conn.close()
 
-print(result)
+    df = pd.DataFrame(result, columns=['id','x', 'y'])
+
+    return df
+
+iface = gr.Interface(fn=fetch_points, inputs=[], outputs=gr.LinePlot(x='x', y='y', label='id', x_lim = (0,15), y_lim = (0,15)))
+iface.launch()
